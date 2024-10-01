@@ -1,0 +1,50 @@
+pipeline {
+    agent any 
+
+    stages {
+        stage('Checkout') {
+            steps {
+                // Checkout the code from the repository
+                git 'https://github.com/your-repo/sample-app.git'
+            }
+        }
+        
+        stage('Build') {
+            steps {
+                // Build the application (assuming it's a Java application)
+                sh './gradlew build'
+            }
+        }
+        
+        stage('Test') {
+            steps {
+                // Run tests (assuming tests are written in JUnit)
+                sh './gradlew test'
+            }
+        }
+        
+        stage('Deploy') {
+            steps {
+                // Deploy the application (this is a placeholder command)
+                sh './deploy.sh'
+            }
+        }
+    }
+
+    post {
+        always {
+            // Archive test results and other artifacts
+            junit 'build/test-results/**/*.xml'
+            archiveArtifacts artifacts: 'build/libs/*.jar', fingerprint: true
+        }
+        success {
+            // Notify on success
+            echo 'Pipeline succeeded!'
+        }
+        failure {
+            // Notify on failure
+            echo 'Pipeline failed!'
+        }
+    }
+}
+
